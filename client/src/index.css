@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400..800&family=Outfit:wght@100..900&display=swap');
+
+@custom-variant dark (&:where(.dark,.dark *));
+
+*{
+  font-family: "Outfit", sans-serif;
+}
+
+@theme {
+  --color-primary:#e6ccff;
+}
+
+::-webkit-scrollbar{
+  display:none;
+}
