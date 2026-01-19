@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 const AppContext  = createContext();
 import { dummyChats,dummyUserData } from "../assets/assets";
 
+
 export const AppContextProvider = ({children})=>{
+
 
     const navigate = useNavigate();
     const [user,setUser] = useState(null);
@@ -17,8 +19,9 @@ export const AppContextProvider = ({children})=>{
 
     const fetchUserChats = async() =>{
         setChats(dummyChats)
-        setSelectedChat(dummyChats[0])
+        setSelectedChat()
     }
+
     useEffect(()=>{
         if(user){
             fetchUserChats()
@@ -36,6 +39,7 @@ export const AppContextProvider = ({children})=>{
         else{
             document.documentElement.classList.remove('dark')
         }
+        localStorage.setItem('theme',theme)
     },[theme])
 
     useEffect(()=>{
@@ -43,7 +47,7 @@ export const AppContextProvider = ({children})=>{
     },[])
 
 
-    const value ={ navigate,user ,setUser,fetchUser,chats,setChats, selectedChat,setSelectedChat,theme}
+    const value ={ navigate,user ,setUser,fetchUser,chats,setChats, selectedChat,setSelectedChat,theme,setTheme}
     return <AppContext.Provider value={value}>
         {children}
     </AppContext.Provider>
