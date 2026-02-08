@@ -1,10 +1,10 @@
 import Stripe from "stripe";
 import Transaction from "../model/transaction.js";
-
+import User from "../model/user.js";
 export const stripe = async (req,res)=>{    
-    const stripe = new Stripe(process.env.STRIPE_WEBHOOK_SECRET)
+    const stripe = new Stripe(process.env.STRIP_SECRET_KEY)
     const sig = req.headers['stripe-signature'];
-
+    console.log("webhook received:",req.body);
     let event;
 
     try {
@@ -24,8 +24,7 @@ export const stripe = async (req,res)=>{
                 })
                 const session = sessionList.data[0];
                 const  {transactionId,appId} = session.metadata;
-                
-                if(appId === 'quickgpt'){
+                if(appId === 'chatgpt'){
                     const transaction = await Transaction.findOne({_id:transactionId,isPaid:false})
 
                     // Update credits is user accout

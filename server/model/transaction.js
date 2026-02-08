@@ -9,5 +9,5 @@ const trasactionSchema = new mongoose.Schema({
 
 },{timestamps:true});
 
-const Transaction = mongoose.model('Transaction',trasactionSchema);
+const Transaction = mongoose.models.Transaction || mongoose.model("Transaction", trasactionSchema);
 export default Transaction;
