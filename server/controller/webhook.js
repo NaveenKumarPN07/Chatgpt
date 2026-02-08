@@ -25,11 +25,11 @@ export const stripe = async (req,res)=>{
                 const session = sessionList.data[0];
                 const  {transactionId,appId} = session.metadata;
                 
-                if(appId === 'chatgpt'){
+                if(appId === 'quickgpt'){
                     const transaction = await Transaction.findOne({_id:transactionId,isPaid:false})
 
                     // Update credits is user accout
-
+                    console.log(transaction);
                     await User.updateOne({_id:transaction.userId},{$inc :{credits:transaction.credits}})
                     // update credit payment status
 
