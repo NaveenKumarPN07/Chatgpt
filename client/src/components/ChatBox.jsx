@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import Message from "./Message";
+import toast from "react-hot-toast";
 const ChatBox = () => {
 
   const conatinerRef = useRef();
-  const { selectedChat, theme } = useAppContext();
-  const [messages, setMessages] = useState([]);
+  const { selectedChat, theme,axios,user,token,setUser } = useAppContext();
+  const [message, setmessage] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [prompt, setPrompt] = useState("");
@@ -14,12 +15,42 @@ const ChatBox = () => {
   const [isPublished, setIsPublished] = useState(false);
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    
+    try {
+      e.preventDefault();
+      if(!user) return toast('login to send the message');
+      setLoading(true)
+
+      const promptCopy = prompt
+      setPrompt('')
+      setmessage(prev => [...prev,{role:'user',content:prompt,timestamp:Date.now(),isImage:false}])
+
+      const {data} = await axios.post( `/api/message/${mode}`,{chatId:selectedChat._id,prompt,isPublished},{headers:{
+        Authorization:`Bearer ${token}`
+      }})
+      if(data.success){
+        setmessage(prev=>[...prev,data.reply])
+        if(mode === 'image'){
+          setUser(prev=> ({...prev,credits:prev.credits-2}))
+        }else{
+          setUser(prev=>({...prev,credits:prev.credits-2}))
+        }
+      }else{
+        toast.error(data.message)
+        setPrompt(promptCopy)
+      }
+
+    } catch (error) {
+      toast.error(error.message)
+    }finally{
+      setPrompt('')
+      setLoading(false)
+    }
   };
 
   useEffect(() => {
     if (selectedChat) {
-      setMessages(selectedChat.messages);
+      setmessage(selectedChat.message);
     }
   }, [selectedChat]);
 
@@ -30,14 +61,14 @@ const ChatBox = () => {
         behavior:'smooth'
       })
     }
-  },[messages])
+  },[message])
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40">
 
-      {/* {Chat Messages} */}
+      {/* {Chat message} */}
 
       <div ref={conatinerRef} className="flex-1 mb-5 overflow-y-scroll">
-        {messages.length === 0 && (
+        {message.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-primary">
             <img
               src={theme === "dark" ? assets.logo_full : assets.logo_full_dark}
@@ -50,7 +81,7 @@ const ChatBox = () => {
           </div>
         )}
 
-        {messages.map((message, index) => (
+        {message.map((message, index) => (
           <Message key={index} message={message} />
         ))}
 

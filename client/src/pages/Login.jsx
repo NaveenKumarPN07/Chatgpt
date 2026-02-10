@@ -1,4 +1,6 @@
-import React,{useState} from 'react'
+import React,{ useState} from 'react'
+import toast from 'react-hot-toast';
+import { useAppContext } from '../context/AppContext';
 
 const Login = () => {
 
@@ -6,12 +8,26 @@ const Login = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const {axios,setToken} = useAppContext();
 
   const handeleSubmit = async(e)=> {
     e.preventDefault();
+    const url = state === "login" ? '/api/user/login' : 'api/user/register';
+
+    try {
+        const {data} = await axios.post(url,{name,email,password})
+        if(data.success){
+            setToken(data.token)
+            localStorage.setItem('token',data.token)
+        }else{
+            toast.error(data.message)
+        }
+    } catch (error) {
+            toast.error(error.message)
+    }
   }
   return (
-    <form className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white">
+    <form onSubmit={handeleSubmit} className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white">
             <p className="text-2xl font-medium m-auto">
                 <span className="text-purple-700">User</span> {state === "login" ? "Login" : "Sign Up"}
             </p>
@@ -38,7 +54,7 @@ const Login = () => {
                     Create an account? <span onClick={() => setState("register")} className="text-purple-700 cursor-pointer">click here</span>
                 </p>
             )}
-            <button type='submit' className="bg-purple-700 hover:bg-purple-800 transition-all text-white w-full py-2 rounded-md cursor-pointer">
+            <button  type='submit' className="bg-purple-700 hover:bg-purple-800 transition-all text-white w-full py-2 rounded-md cursor-pointer">
                 {state === "register" ? "Create Account" : "Login"}
             </button>
         </form>
