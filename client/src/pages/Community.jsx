@@ -15,8 +15,10 @@ const Community = () => {
           Authorization:`Bearer ${token}`
         }
       });
+      
       if (data.success) {
         setImages(data.images);
+        
       } else {
         toast.error(data.message);
       }
