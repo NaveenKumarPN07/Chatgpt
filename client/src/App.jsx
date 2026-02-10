@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import ChatBox from "./components/ChatBox";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/SideBar";
 import Credits from "./pages/Credits";
 import Login from "./pages/Login";
 import Community from "./pages/Community";
